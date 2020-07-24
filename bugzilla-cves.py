@@ -7,6 +7,7 @@ binutils_bugzilla_regex = re.compile(r'https:\/\/sourceware.org\/bugzilla\/show_
 binutils_bugzilla_prefix = 'https://sourceware.org/bugzilla/show_bug.cgi?id='
 opensuse_bugzilla_prefix = 'https://bugzilla.opensuse.org/show_bug.cgi?id='
 pr_regex = re.compile(r'\+\s+PR ([\w-]+\/)?([0-9]+)')
+obs_changelog = '/home/marxin/BIG/osc/home:marxin:branches:devel:gcc/binutils/binutils.changes'
 
 # the file is created from bugzilla with Export XML from all PRs assigned to matz@suse.com
 
@@ -28,7 +29,7 @@ for line in open('binutils.diff').readlines():
 # parse already mentioned CVEs in binutils package
 resolved_cves = set()
 
-for line in open('/home/marxin/BIG/osc/home:marxin:branches:devel:gcc-clean/binutils/binutils.changes').readlines():
+for line in open(obs_changelog).readlines():
     line = line.strip()
     m = cve_regex.search(line)
     if m:
