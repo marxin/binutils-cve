@@ -12189,10 +12189,119 @@ index 7b9b542349..a4f37eb319 100644
  
  	* aclocal.m4: Regenerate.
 diff --git a/bfd/ChangeLog b/bfd/ChangeLog
-index ca87f744a3..65d9aa7087 100644
+index d533d05793..7608f9b0ba 100644
 --- a/bfd/ChangeLog
 +++ b/bfd/ChangeLog
-@@ -1,35 +1,1777 @@
+@@ -1,3 +1,23 @@
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	* development.sh (development): Set to true.
++
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
++
++	* development.sh (development): Set to false.
++	* version.m4: Set to 2.35.1.
++	* configure: Regenerate.
++	* po/bfd.pot: Regenerate.
++
++2020-09-15  Hans-Peter Nilsson  <hp@axis.com>
++
++	Backport from mainline:
++	PR ld/26589
++	* elf32-cris.c (cris_elf_check_relocs): Add missing NULL check
++	on argument before calling UNDEFWEAK_NO_DYNAMIC_RELOC.
++
+ 2020-09-10  Alan Modra  <amodra@gmail.com>
+ 
+ 	Apply from master
+@@ -14,48 +34,1859 @@
+ 	Clear do_tls_opt on odd instructions.
+ 	(ppc64_elf_relocate_section): Don't sanity check TPREL16_HA.
+ 
+-2020-08-11  Szabolcs Nagy  <szabolcs.nagy@arm.com>
++2020-09-03  Nick Clifton  <nickc@redhat.com>
++
++	Backport from mainline:
++	2020-08-20  Nick Clifton  <nickc@redhat.com>
++
++	PR 26406
++	* elf-bfd.h (struct bfd_elf_section_data): Add
++	has_secondary_relocs field.
++	* elf.c (_bfd_elf_copy_special_section_fields): Set the
++	has_secondary_relocs field for sections which have associated
++	secondary relocs.
++	* elfcode.h (elf_write_relocs): Only call write_secondary_relocs
++	on sections which have associated secondary relocs.
++
++2020-08-26  David Faust  <david.faust@oracle.com>
++
++	* archures.c (bfd_mach_xbpf): Define.
++	* bfd-in2.h: Regenerate.
++	* cpu-bpf.c (bfd_xbpf_arch) New.
++	(bfd_bpf_arch) Update next in list field to point to xbpf arch.
++
++2020-08-25  Nick Clifton  <nickc@redhat.com>
++
++	Backport from the mainline:
++	2020-08-25  Mark Wielaard  <mark@klomp.org>
++
++	*  dwarf2.c (struct dwarf2_debug_file): Add dwarf_rnglists_buffer
++	and dwarf_rnglists_size fields.
++	(dwarf_debug_sections): Add debug_rnglists.
++	(dwarf_debug_section_enum): Likewise.
++	(read_debug_rnglists): New function.
++	(read_rangelist): New function to call either read_ranges or
++	read_rnglists. Rename original function to...
++	(read_ranges): ...this.
++	(read_rnglists): New function.
++
++	2020-08-24  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2.c (read_attribute_value): Handle DW_FORM_data16.
++	(read_formatted_entries): Likewise. And skip zero entry.
++
++2020-08-15  Alan Modra  <amodra@gmail.com>
++
++	PR 26389
++	* syms.c (bfd_decode_symclass): Choose 'c' for commons only when
++	SEC_SMALL_DATA.
++	* elf32-m32r.c (_bfd_m32r_elf_symbol_processing): Set SEC_SMALL_DATA
++	on small common section.
++	* elf32-score.c (s3_bfd_score_elf_symbol_processing): Likewise.
++	* elf32-score7.c (s7_bfd_score_elf_symbol_processing): Likewise.
++	* elf32-tic6x.c (elf32_tic6x_symbol_processing): Likewise.
++	* elf32-v850.c (v850_elf_symbol_processing): Likewise.
++	* elfxx-mips.c (_bfd_mips_elf_symbol_processing): Likewise.
++	* ecoff.c (ecoff_set_symbol_info, ecoff_link_add_externals): Likewise.
+ 
+-	Backport from mainline.
+-	2020-07-30  Szabolcs Nagy  <szabolcs.nagy@arm.com>
++2020-08-12  Nick Clifton  <nickc@redhat.com>
++
++	* po/ru.po: Updated Russian translation.
++	* po/sr.po: Updated Serbian translation.
++
++2020-08-07  David Faust  <david.faust@oracle.com>
++
++	* elf64-bpf.c (bpf_elf_relocate_section): Ensure signed division for
++	DISP16 and DISP32 relocations.
++
++2020-08-05  David Faust  <david.faust@oracle.com>
++
++	* elf64-bpf.c (bpf_elf_generic_reloc): New function.
++	(bpf_elf_howto_table): Use it here.
++	(bpf_elf_relocate_section): Use addends recorded in input_bfd for
++	instruction and data relocations.
++
++2020-07-30  Szabolcs Nagy  <szabolcs.nagy@arm.com>
+ 
+ 	PR ld/26312
+ 	* elfnn-aarch64.c (elfNN_aarch64_init_small_plt0_entry): Set sh_entsize
+ 	to 0.
+ 	(elfNN_aarch64_finish_dynamic_sections): Remove sh_entsize setting.
+ 
 -2020-04-21  Tamar Christina  <tamar.christina@arm.com>
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
 +
@@ -13544,14 +13653,14 @@ index ca87f744a3..65d9aa7087 100644
 +
 +	* aoutx.h (swap_std_reloc_out): Special case 64 bit relocations.
 +	(aout_link_reloc_link_order): Likewise. Make r_length an unsigned.
-+
+ 
+-	Backport from mainline.
+-	2020-04-21  Tamar Christina  <tamar.christina@arm.com>
 +2020-04-28  Alan Modra  <amodra@gmail.com>
 +
 +	* vms-alpha.c (_bfd_vms_slurp_etir): Correct divide by zero check.
 +	Emit warning message.
- 
--	Backport from mainline.
--	2020-04-21  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-04-27  Tamar Christina  <tamar.christina@arm.com>
 +
 +	* coff-i386.c (COFF_WITH_PE_BIGOBJ): New.
@@ -13621,7 +13730,9 @@ index ca87f744a3..65d9aa7087 100644
 +	(elf64_alpha_check_relocs): Set sec instead of reltext.  Warn
 +	DT_TEXTREL with -M.
 +	(elf64_alpha_calc_dynrel_sizes): Warn DT_TEXTREL with -M.
-+
+ 
+-	Backport from mainline.
+-	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
 +2020-04-21  Nick Clifton  <nickc@redhat.com>
 +
 +	* po/sr.po: Updated Serbian translation.
@@ -13643,9 +13754,7 @@ index ca87f744a3..65d9aa7087 100644
 +	* elf64-ppc.c (ppc64_elf_size_stubs): Strip relbrlt too.
 +
 +2020-04-18  Alan Modra  <amodra@gmail.com>
- 
--	Backport from mainline.
--	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
++
 +	* section.c (bfd_is_const_section): Correct test for special
 +	sections.
 +	* bfd-in2.h: Regenerate.
@@ -13981,7 +14090,7 @@ index ca87f744a3..65d9aa7087 100644
  
  	* configure.ac (HAVE_EXECUTABLE_SUFFIX): Removed.
  	(EXECUTABLE_SUFFIX): Likewise.
-@@ -53,10 +1795,9 @@
+@@ -79,10 +1910,9 @@
  	(try_load_plugin): Likewise.
  	(bfd_plugin_canonicalize_symtab): Likewise.
  	* plugin.h (bfd_plugin_set_program_name): Remove int argument.
@@ -13994,7 +14103,7 @@ index ca87f744a3..65d9aa7087 100644
  
  	PR binutils/25640
  	* plugin.c (plugin_list_entry): Add has_symbol_type.
-@@ -67,20 +1808,580 @@
+@@ -93,20 +1923,580 @@
  	(bfd_plugin_canonicalize_symtab): Use LTO plugin symbol type if
  	available.
  
@@ -14580,7 +14689,7 @@ index ca87f744a3..65d9aa7087 100644
  
  2020-02-25  H.J. Lu  <hongjiu.lu@intel.com>
  
-@@ -92,22 +2393,427 @@
+@@ -118,22 +2508,427 @@
  	set.
  	* plugin.h (bfd_plugin_set_program_name): Add an int argument.
  
@@ -14657,7 +14766,9 @@ index ca87f744a3..65d9aa7087 100644
  
 -2020-02-14  Nick Clifton  <nickc@redhat.com>
 +2020-02-19  Alan Modra  <amodra@gmail.com>
-+
+ 
+-	Import from mainline:
+-	2020-02-13  H.J. Lu  <hongjiu.lu@intel.com>
 +	* libbfd-in.h (_bfd_constant_p): Define.
 +	(_bfd_alloc_and_read, _bfd_malloc_and_read): Check read size against
 +	file size before allocating memory.
@@ -14780,9 +14891,7 @@ index ca87f744a3..65d9aa7087 100644
 +	(bfd_alloc2, bfd_zalloc2): Delete.
 +	(_bfd_mul_overflow): Define.
 +	* libbfd.h: Regenerate.
- 
--	Import from mainline:
--	2020-02-13  H.J. Lu  <hongjiu.lu@intel.com>
++
 +2020-02-19  Alan Modra  <amodra@gmail.com>
 +
 +	* elf.c (bfd_section_from_shdr): Use bfd_zalloc rather than
@@ -15011,7 +15120,7 @@ index ca87f744a3..65d9aa7087 100644
  
  	* plugin.c (try_load_plugin): Make plugin_list_iter an argument
  	and use it if it isn't NULL.  Remove has_plugin_p argument.  Add
-@@ -119,18 +2825,26 @@
+@@ -145,18 +2940,26 @@
  	(build_plugin_list): New function.
  	(load_plugin): Call build_plugin_list and use plugin_list.
  
@@ -15041,7 +15150,7 @@ index ca87f744a3..65d9aa7087 100644
  
  	PR binutils/25355
  	* configure.ac (HAVE_EXECUTABLE_SUFFIX): New AC_DEFINE.
-@@ -164,92 +2878,298 @@
+@@ -190,92 +2993,298 @@
  	* plugin.h (plugin_data_struct): Add real_bfd, real_nsyms and
  	real_syms.
  
@@ -15176,7 +15285,8 @@ index ca87f744a3..65d9aa7087 100644
 -	* configure: Regenerate.
 +	* config.bfd: Move the c30-aout and tic30-aout targets onto the
 +	obsolete list.
-+
+ 
+-2020-01-29  Alan Modra  <amodra@gmail.com>
 +2020-01-31  Sandra Loosemore  <sandra@codesourcery.com>
 +
 +	* elf-eh-frame.c (_bfd_elf_write_section_eh_frame): DW_EH_PE_datarel
@@ -15204,8 +15314,7 @@ index ca87f744a3..65d9aa7087 100644
 +	after a seek or read failure.
 +
 +2020-01-16  Jon Turney  <jon.turney@dronecode.org.uk>
- 
--2020-01-29  Alan Modra  <amodra@gmail.com>
++
 +	* peXXigen.c (pe_is_repro): New function.
 +	(_bfd_XX_print_private_bfd_data_common): Note timestamp is
 +	actually a build hash if PE_IMAGE_DEBUG_TYPE_REPRO is present.
@@ -15720,15 +15829,63 @@ index 3583e5bd34..e1b040d582 100644
  
  	* Makefile.am: Append CXX_DIALECT to CXX.
 diff --git a/opcodes/ChangeLog b/opcodes/ChangeLog
-index 982454e421..ddb183b42d 100644
+index 982454e421..b53a2bba98 100644
 --- a/opcodes/ChangeLog
 +++ b/opcodes/ChangeLog
-@@ -1,12 +1,1140 @@
+@@ -1,12 +1,1188 @@
 -2020-07-06  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
-+2020-07-24  Nick Clifton  <nickc@redhat.com>
++2020-09-19  Nick Clifton  <nickc@redhat.com>
  
 -	Backport from mainline.
 -	2020-05-26  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
++	This is the 2.35.1 point release.
++
++	* configure: Regenerate.
++	* po/opcodes.pot: Regenerate.
++
++2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
++
++	* disassemble.c (enum epbf_isa_attr): Add ISA_XBPFBE, ISA_EBPFMAX.
++
++2020-08-26  David Faust  <david.faust@oracle.com>
++
++	* bpf-desc.c: Regenerate.
++	* bpf-desc.h: Likewise.
++	* bpf-opc.c: Likewise.
++	* bpf-opc.h: Likewise.
++	* disassemble.c (disassemble_init_for_target): Set bits for xBPF
++	ISA when appropriate.
++
++2020-08-18  Peter Bergner  <bergner@linux.ibm.com>
++
++	Backported from master:
++	2020-08-18  Peter Bergner  <bergner@linux.ibm.com>
++
++	* ppc-opc.c (powerpc_opcodes) <xvcvbf16sp>: Rename from this...
++	<xvcvbf16spn>: ...to this.
++
++2020-08-12  Nick Clifton  <nickc@redhat.com>
++
++	* po/sr.po: Updated Serbian translation.
++
++2020-08-04  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR gas/26305
++	* i386-opc.h (Prefix_Disp8): New.
++	(Prefix_Disp16): Likewise.
++	(Prefix_Disp32): Likewise.
++	(Prefix_Load): Likewise.
++	(Prefix_Store): Likewise.
++	(Prefix_VEX): Likewise.
++	(Prefix_VEX3): Likewise.
++	(Prefix_EVEX): Likewise.
++	(Prefix_REX): Likewise.
++	(Prefix_NoOptimize): Likewise.
++	* i386-opc.tbl: Use Prefix_XXX on pseudo prefixes.  Add {disp16}.
++	* i386-tbl.h: Regenerated.
++
++2020-07-24  Nick Clifton  <nickc@redhat.com>
++
 +	* configure: Regenerate.
 +
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
@@ -16867,7 +17024,7 @@ index 982454e421..ddb183b42d 100644
  2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR gas/25516
-@@ -25,24 +1153,88 @@
+@@ -25,24 +1201,88 @@
  	Cpu64 and Intel64Only.  Remove AMD64 from sysenter/sysenter.
  	* i386-tbl.h: Regenerated.
  
@@ -16939,11 +17096,11 @@ index 982454e421..ddb183b42d 100644
 +	(fldenv, fnstenv, fstenv, fnsave, fsave, frstor): Drop
 +	DefaultSize.
 +	* i386-tbl.h: Re-generate.
-+
-+2020-01-30  Alan Modra  <amodra@gmail.com>
  
 -	Backport from mainline.
 -	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
++2020-01-30  Alan Modra  <amodra@gmail.com>
++
 +	* tic4x-dis.c (tic4x_dp): Make unsigned.
 +
 +2020-01-27  H.J. Lu  <hongjiu.lu@intel.com>
@@ -16965,7 +17122,7 @@ index 982454e421..ddb183b42d 100644
  
  	PR 25403
  	* aarch64-tbl.h (struct aarch64_opcode): Re-order cfinv.
-@@ -50,6 +1242,11 @@
+@@ -50,6 +1290,11 @@
  	* aarch64-dis-2.c: Likewise.
  	* aarch64-opc-2.c: Likewise.
  
@@ -16977,7 +17134,7 @@ index 982454e421..ddb183b42d 100644
  2020-01-21  Jan Beulich  <jbeulich@suse.com>
  
  	* i386-opc.tbl (vcvtneps2bf16x): Add Broadcast, Xmmword, and
-@@ -63,6 +1260,14 @@
+@@ -63,6 +1308,14 @@
  	* po/pt_BR.po: Updated Brazilian Portuguese translation.
  	* po/uk.po: Updated Ukranian translation.
  
@@ -16993,11 +17150,39 @@ index 982454e421..ddb183b42d 100644
  
  	* configure: Regenerate.
 diff --git a/binutils/ChangeLog b/binutils/ChangeLog
-index 1e9a96c9bb..f66b3b862f 100644
+index 1e9a96c9bb..76ba6d9840 100644
 --- a/binutils/ChangeLog
 +++ b/binutils/ChangeLog
-@@ -1,12 +1,888 @@
+@@ -1,12 +1,916 @@
 -2020-03-25  H.J. Lu  <hongjiu.lu@intel.com>
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
++
++	* configure: Regenerate.
++	* po/binutils.pot: Regenerate.
++
++2020-09-03  Nick Clifton  <nickc@redhat.com>
++
++	Import from mainline:
++	2020-08-28  Nick Clifton  <nickc@redhat.com>
++
++	PR 26548
++	* dwarf.c (read_leb128): When checking for overflow of a signed
++	read, use a signed shift.
++
++2020-08-25  Nick Clifton  <nickc@redhat.com>
++
++	Backport from the mainline:
++	2020-08-21  Mark Wielaard  <mark@klomp.org>
++
++	* testsuite/binutils-all/readelf.exp (readelf_wi_test): Also
++	recognize DW_LANG_C11.
++
++2020-08-12  Nick Clifton  <nickc@redhat.com>
++
++	* po/sr.po: Updated Serbian translation.
++
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
 +
 +	* configure: Regenerate.
@@ -17889,7 +18074,7 @@ index 1e9a96c9bb..f66b3b862f 100644
  
  2020-02-25  H.J. Lu  <hongjiu.lu@intel.com>
  
-@@ -14,33 +890,141 @@
+@@ -14,33 +918,141 @@
  	* ar.c (main): Pass 0 to bfd_plugin_set_program_name.
  	* nm.c (main): Pass 1 to bfd_plugin_set_program_name.
  
@@ -18148,21 +18333,249 @@ index 19fc6cd55c..12795fc497 100644
  
  	Binutils 2.34 branch created.
 diff --git a/gas/ChangeLog b/gas/ChangeLog
-index 5eb92e3383..bc179d9197 100644
+index 5eb92e3383..26c703531d 100644
 --- a/gas/ChangeLog
 +++ b/gas/ChangeLog
-@@ -1,17 +1,585 @@
+@@ -1,17 +1,813 @@
 -2020-07-06  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
-+2020-07-24  Nick Clifton  <nickc@redhat.com>
++2020-09-19  Nick Clifton  <nickc@redhat.com>
  
 -	Backport from mainline.
 -	2020-05-26  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
-+	* configure: Regenerate.
++	This is the 2.35.1 point release.
  
 -	* testsuite/gas/s390/zarch-z13.d: Add regexp checks for vector
 -	load/store instruction variants with alignment hints.
 -	* testsuite/gas/s390/zarch-z13.s: Emit new vector load/store
 -	instruction variants with alignment hints.
++	* configure: Regenerate.
++	* po/gas.pot: Regenerate.
++
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	Import from mainline:
++	2020-09-15  Nick Clifton  <nickc@redhat.com>
++
++	* read.c (s_nop): Preserve the input_line_pointer around the call
++	to md_assemble.
++	* config/tc-s12z.c (md_assemble): Revert previous delta.
++
++2020-09-15  Nick Clifton  <nickc@redhat.com>
++
++	Import from mainline:
++	2020-09-15  David Faust  <david.faust@oracle.com>
++
++	* config/tc-bpf.h (md_single_noop_insn): Use 'ja 0' for no-op.
++
++2020-09-15  Nick Clifton  <nickc@redhat.com>
++
++	Import from mainline:
++	2020-09-14  Nick Clifton  <nickc@redhat.com>
++
++	* read.c (s_nop): New function.  Handles the .nop directive.
++	(potable): Add entry for "nop".
++	(s_nops): Code tidy.
++	* read.h (s_nop): Add prototype.
++	* config/tc-bpf.h (md_single_noop_insn): Define.
++	* config/tc-mmix.h (md_single_noop_insn): Define.
++	* config/tc-or1k.h (md_single_noop_insn): Define.
++	* config/tc-ia64.h (md_single_noop_insn): Define.
++	* write.c (relax_segment): Update error message regarding
++	non-absolute values passed to .fill and .nops.
++	* NEWS: Mention the new directive.
++	* doc/as.texi: Document the new directive.
++	* doc/internals.texi: Document the new internal macros used to
++	implement the new directive.
++	* testsuite/gas/all/nop.s: New test.
++	* testsuite/gas/all/nop.d: New test control file.
++	* testsuite/gas/all/gas.exp: Run the new test.
++	* testsuite/gas/elf/dwarf-5-nop-for-line-table.s: New test.
++	* testsuite/gas/elf/dwarf-5-nop-for-line-table.d: New test
++	control file.
++	* testsuite/gas/elf/elf.exp: Run the new test.
++	* testsuite/gas/i386/space1.l: Adjust expected output.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-09-07  Mark Wielaard  <mark@klomp.org>
++
++	* as.texi (-g): Explicitly mention when .debug_info and .debug_line
++	are generated for the DWARF format.
++	(Loc): Add that it is an error to both use a .loc directive and
++	generate a .debug_line yourself.
++	* dwarf2dbg.c (dwarf2_any_loc_directive_seen): New static variable.
++	(dwarf2_directive_loc): Set dwarf2_any_loc_directive_seen to TRUE.
++	(dwarf2_finish): Check dwarf2_any_loc_directive_seen before emitting
++	an error. Only create .debug_line if it is empty (or doesn't exist).
++	* testsuite/gas/i386/i386.exp: Add dwarf2-line-{1,2,3,4} when testing
++	an elf target.
++	* testsuite/gas/i386/dwarf2-line-{1,2,3,4}.{s,d,l}: New test files.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-09-07  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (add_line_strp): New function.
++	(out_dir_and_file_list): Take line_seg and sizeof_offset as
++	arguments, Use DW_FORM_line_strp for dir and file. Call
++	add_line_strp and set symbol offset for DWARF2_LINE_VERSION 5.
++	(out_debug_line): Call out_dir_and_file_list with line_seg and
++	sizeof_offset.
++	* gas/testsuite/gas/elf/dwarf-5-file0.d: Expect indirect line
++	strings.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-09-07  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (DWARF2_RNGLISTS_VERSION): New constant.
++	(out_debug_ranges): Add ranges_sym argument and set it.
++	(out_debug_rnglists): New function.
++	(out_debug_info): Change ranges_seg argument to ranges_sym
++	and use it to set DW_AT_ranges value.
++	(dwarf2_finish): Remove ranges_seg, add ranges_sym. For
++	DWARF2_VERSION 5 call out_debug_rnglists.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-08-28  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (dwarf2_directive_filename): Initialize with_md5 to
++	FALSE.
++	* gas/testsuite/gas/elf/dwarf-5-file0.s: Add a random bignum.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-09-01  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (out_debug_abbrev): Use DW_FORM_sec_offset for DWARF
++	version 4 or higher.
++
++2020-09-14  Mark Wielaard  <mark@klomp.org>
++
++	Backport from mainline:
++	2020-08-26  Mark Wielaard  <mark@klomp.org>
++
++	* as.c (parse_args): Handle bad -gdwarf options.
++
++2020-08-26  David Faust  <david.faust@oracle.com>
++
++	* config/tc-bpf.c: Add option -mxbpf to select xbpf isa.
++	* testsuite/gas/bpf/indcall-1.d: New file.
++	* testsuite/gas/bpf/indcall-1.s: Likewise.
++	* testsuite/gas/bpf/indcall-bad-1.l: Likewise.
++	* testsuite/gas/bpf/indcall-bad-1.s: Likewise.
++	* testsuite/gas/bpf/bpf.exp: Run new tests.
++
++2020-08-25  Nick Clifton  <nickc@redhat.com>
++
++	Backport from mainline:
++	2020-08-04  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (out_debug_abbrev): When DWARF2_VERSION >= 4, use
++	DW_FORM_udata for DW_AT_high_pc.
++	(out_debug_info): Use emit_leb128_expr for DW_AT_high_pc, when
++	DWARF2_VERSION >= 4.
++	* read.c (emit_leb128_exp): No longer static.
++	* read.h (emit_leb128_exp): Define.
++
++	2020-08-02  Mark Wielaard  <mark@klomp.org>
++
++	* gas/dwarf2dbg.c (out_dir_and_file_list): For DWARF5 emit at
++	least one directory if there is at least one file. Use dirs[1]
++	if dirs[0] is not set, or if there is no dirs[1] the current
++	working directory. Use files[1] filename, when files[0] filename
++	isn't set.
++
++	2020-08-02  Mark Wielaard  <mark@klomp.org>
++
++	* dwarf2dbg.c (out_debug_info): Emit unit type and abbrev offset
++	for DWARF5.
++	* gas/testsuite/gas/elf/dwarf-4-cu.d: New file.
++	* gas/testsuite/gas/elf/dwarf-4-cu.s: Likewise.
++	* gas/testsuite/gas/elf/dwarf-5-cu.d: Likewise.
++	* gas/testsuite/gas/elf/dwarf-5-cu.s: Likewise.
++	* testsuite/gas/elf/elf.exp: Run dwarf-4-cu and dwarf-5-cu.
++
++2020-08-18  Peter Bergner  <bergner@linux.ibm.com>
++
++	Backported from master:
++	2020-08-18  Peter Bergner  <bergner@linux.ibm.com>
++
++	* testsuite/gas/ppc/vsx4.s: Update test to use new mnemonic.
++	* testsuite/gas/ppc/vsx4.d: Likewise.
++
++2020-08-14  Joe Ramsay  <joe.ramsay@arm.com>
++
++	Backported from master
++	2020-08-04  Joe Ramsay <joe.ramsay@.arm.com>
++
++	* config/tc-arm.c (do_neon_cvt_1): Parse vcvtne as vcvt-ne for
++	NS_FD shape when MVE is present
++	* testsuite/gas/arm/mve-vcvtne-it-bad.d: New test.
++	* testsuite/gas/arm/mve-vcvtne-it-bad.l: New test.
++	* testsuite/gas/arm/mve-vcvtne-it-bad.s: New test.
++	* testsuite/gas/arm/mve-vcvtne-it.d: New test.
++	* testsuite/gas/arm/mve-vcvtne-it.s: New test.
++
++2020-08-12  Nick Clifton  <nickc@redhat.com>
++
++	* po/ru.po: Updated Russian translation.
++
++2020-08-04  H.J. Lu  <hongjiu.lu@intel.com>
++
++	* NEWS: Mention {disp16} pseudo prefix.
++
++2020-08-04  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR gas/26305
++	* config/tc-i386.c (_i386_insn::disp_encoding): Add
++	disp_encoding_16bit.
++	(parse_insn): Check Prefix_XXX for pseudo prefixes.  Handle
++	{disp16}.
++	(build_modrm_byte): Handle {disp16}.
++	(i386_index_check): Check invalid {disp16} and {disp32} pseudo
++	prefixes.
++	* doc/c-i386.texi: Update {disp32} documentation and document
++	{disp16}.
++	* testsuite/gas/i386/i386.exp: Run x86-64-inval-pseudo.
++	* testsuite/gas/i386/inval-pseudo.s: Add {disp32}/{disp16}
++	tests.
++	* testsuite/gas/i386/pseudos.s: Add {disp8}/{disp32} vmovaps
++	tests with 128-byte displacement.  Add {disp16} tests.
++	* testsuite/gas/i386/x86-64-pseudos.s: Add {disp8}/{disp32}
++	vmovaps test.  Add (%r13)/(%r13d) tests.
++	* testsuite/gas/i386/x86-64-inval-pseudo.l: New file.
++	* testsuite/gas/i386/x86-64-inval-pseudo.s: Likewise.
++	* testsuite/gas/i386/inval-pseudo.l: Updated.
++	* testsuite/gas/i386/pseudos.d: Likewise.
++	* testsuite/gas/i386/x86-64-pseudos.d: Likewise.
++
++2020-07-30  Nick Clifton  <nickc@redhat.com>
++
++	* as.c (dwatf_level): Default to level 3 in case version is not
++	set on the command line.
++
++2020-07-28  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR gas/26305
++	* config/tc-i386.c (build_modrm_byte): Use disp32/disp16 on
++	(%bp)/(%ebp)/(%rbp) for {disp32}.
++	* doc/c-i386.texi: Update {disp32} documentation.
++	* testsuite/gas/i386/pseudos.s: Add (%bp)/(%ebp) tests.
++	* testsuite/gas/i386/x86-64-pseudos.s: Add (%ebp)/(%rbp) tests.
++	* testsuite/gas/i386/pseudos.d: Updated.
++	* testsuite/gas/i386/x86-64-pseudos.d: Likewise.
++
++2020-07-24  Nick Clifton  <nickc@redhat.com>
++
++	* configure: Regenerate.
++
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
 +
 +	2.35 Release:
@@ -18362,7 +18775,8 @@ index 5eb92e3383..bc179d9197 100644
 +	* testsuite/gas/i386/i386.exp: Run new test.
 +
 +2020-06-26  Pat Bernardi  <bernardi@adacore.com>
-+
+ 
+-2020-06-10  Alex Coplan  <alex.coplan@arm.com>
 +	* config/tc-m68k.c (m68k_elf_gnu_attribute): New function.
 +	(md_pseudo_table): Handle "gnu_attribute".
 +	* doc/as.texi: Document GNU attribute for M68K.
@@ -18632,8 +19046,7 @@ index 5eb92e3383..bc179d9197 100644
 +	* config/tc-i386.c (parse_real_register): Add allow_pseudo_reg
 +	check to %st(N) parsing logic.
 +	* testsuite/gas/cfi/cfi-i386.s: Set "generic32" arch.
- 
--2020-06-10  Alex Coplan  <alex.coplan@arm.com>
++
 +2020-06-08  Jan Beulich  <jbeulich@suse.com>
 +
 +	* config/tc-i386.c (bad_reg): New.
@@ -18747,7 +19160,7 @@ index 5eb92e3383..bc179d9197 100644
  	* write.c (relax_segment): Fix handling of negative offset when
  	relaxing an rs_org frag.
  	* testsuite/gas/aarch64/org-neg.d: New test.
-@@ -21,18 +589,346 @@
+@@ -21,18 +817,346 @@
  	* testsuite/gas/arm/org-neg.l: Error output for test.
  	* testsuite/gas/arm/org-neg.s: Input for test.
  
@@ -19095,7 +19508,7 @@ index 5eb92e3383..bc179d9197 100644
  2020-05-15  Alan Modra  <amodra@gmail.com>
  	    Alex Coplan  <alex.coplan@arm.com>
  
-@@ -46,29 +942,558 @@
+@@ -46,29 +1170,558 @@
  	* testsuite/gas/all/assign-bad-recursive.s: Assembly for test.
  	* testsuite/gas/all/gas.exp: Run it.
  
@@ -19147,9 +19560,7 @@ index 5eb92e3383..bc179d9197 100644
 +	* testsuite/gas/ppc/ppc.exp: Run it.
 +
 +2020-05-11  Alan Modra  <amodra@gmail.com>
- 
--	Backport from mainline.
--	2020-05-04  Andre Vieira  <andre.simoesdiasvieira@arm.com>
++
 +	* testsuite/gas/ppc/maskmanip.d,
 +	* testsuite/gas/ppc/maskmanip.s: New test.
 +	* testsuite/gas/ppc/ppc.exp: Run it.
@@ -19201,7 +19612,9 @@ index 5eb92e3383..bc179d9197 100644
 +	* testsuite/gas/ppc/power10.s: Likewise.
 +
 +2020-05-11  Peter Bergner  <bergner@linux.ibm.com>
-+
+ 
+-	Backport from mainline.
+-	2020-05-04  Andre Vieira  <andre.simoesdiasvieira@arm.com>
 +	* testsuite/gas/ppc/power10.s: New test.
 +	* testsuite/gas/ppc/power10.d: Likewise.
 +	* testsuite/gas/ppc/ppc.exp: Run it.
@@ -19663,7 +20076,7 @@ index 5eb92e3383..bc179d9197 100644
  
  	PR 25660
  	*  config/tc-arm.c (operand_parse_code): Add OP_RNSDMQR and OP_oRNSDMQ.
-@@ -82,6 +1507,768 @@
+@@ -82,6 +1735,768 @@
  	* testsuite/gas/arm/mve-vaddsub-it-bad.d: New test.
  	* testsuite/gas/arm/nomve-vaddsub-it.d: New test.
  
@@ -20432,7 +20845,7 @@ index 5eb92e3383..bc179d9197 100644
  2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR gas/25516
-@@ -95,34 +2282,137 @@
+@@ -95,34 +2510,137 @@
  	-mamd64 to x86-64-sysenter-amd.
  	* testsuite/gas/i386/x86-64-sysenter.d: New file.
  
@@ -20587,7 +21000,7 @@ index 5eb92e3383..bc179d9197 100644
  	PR gas/25472
  	* config/tc-arm.c (armv8m_main_ext_table): Refactored +dsp adding.
  	(armv8_1m_main_ext_table): Refactored +dsp adding and enabled dsp for
-@@ -152,15 +2442,190 @@
+@@ -152,15 +2670,190 @@
  	* po/fr.po: Updated French translation.
  	* po/ru.po: Updated Russian translation.
  
@@ -20600,9 +21013,7 @@ index 5eb92e3383..bc179d9197 100644
 +	* testsuite/gas/aarch64/sve-movprfx_28.d,
 +	* testsuite/gas/aarch64/sve-movprfx_28.l,
 +	* testsuite/gas/aarch64/sve-movprfx_28.s: New test.
- 
--	Backport from mainline.
--	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-01-30  Jan Beulich  <jbeulich@suse.com>
 +
 +	* config/tc-i386.c (output_disp): Tighten base_opcode check.
@@ -20677,7 +21088,9 @@ index 5eb92e3383..bc179d9197 100644
 +	* testsuite/gas/elf/elf.exp: Likewise.
 +	* testsuite/gas/macros/macros.exp: Likewise.
 +	* testsuite/lib/gas-defs.exp: Likewise.
-+
+ 
+-	Backport from mainline.
+-	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
 +2020-01-27  Tamar Christina  <tamar.christina@arm.com>
  
  	PR 25403
@@ -20781,7 +21194,7 @@ index 5eb92e3383..bc179d9197 100644
  2020-01-21  Jan Beulich  <jbeulich@suse.com>
  
  	* testsuite/gas/i386/avx512_bf16_vl.s,
-@@ -174,6 +2639,16 @@
+@@ -174,6 +2867,16 @@
  
  	* po/uk.po: Updated Ukranian translation.
  
@@ -43118,14 +43531,33 @@ index f7c648e594..6dcf93a446 100644
  
  	* Makefile.am: Set MAKEOVERRIDES.
 diff --git a/cpu/ChangeLog b/cpu/ChangeLog
-index 70e05d612f..053760d446 100644
+index 70e05d612f..f810248482 100644
 --- a/cpu/ChangeLog
 +++ b/cpu/ChangeLog
-@@ -1,6 +1,105 @@
+@@ -1,6 +1,123 @@
 -2020-02-01  Nick Clifton  <nickc@redhat.com>
-+2020-07-04  Nick Clifton  <nickc@redhat.com>
- 
+-
 -	Binutils 2.34 release.
++2020-08-26  David Faust  <david.faust@oracle.com>
++
++	* bpf.cpu (arch bpf): Add xbpf mach and isas.
++	(define-xbpf-isa) New pmacro.
++	(all-isas) Add xbpfle,xbpfbe.
++	(endian-isas): New pmacro.
++	(mach xbpf): New.
++	(model xbpf-def): Likewise.
++	(h-gpr): Add xbpf mach.
++	(f-dstle, f-srcle, dstle, srcle): Add xbpfle isa.
++	(f-dstbe, f-srcbe, dstbe, srcbe): Add xbpfbe isa.
++	(define-alu-insn-un): Use new endian-isas pmacro.
++	(define-alu-insn-bin, define-alu-insn-mov): Likewise.
++	(define-endian-insn, define-lddw): Likewise.
++	(dlind, dxli, dxsi, dsti): Likewise.
++	(define-cond-jump-insn, define-call-insn): Likewise.
++	(define-atomic-insns): Likewise.
++
++2020-07-04  Nick Clifton  <nickc@redhat.com>
++
 +	Binutils 2.35 branch created.
 +
 +2020-06-25 David Faust  <david.faust@oracle.com>
@@ -43308,15 +43740,82 @@ index d13b1e80dd..69ab913d9f 100644
  
  	* configure, Makefile.in: Rebuild.
 diff --git a/ld/ChangeLog b/ld/ChangeLog
-index 0006ace73e..6dcd55ccd2 100644
+index bb9dddb0c8..4eec7d2977 100644
 --- a/ld/ChangeLog
 +++ b/ld/ChangeLog
-@@ -1,37 +1,1803 @@
--2020-06-03  Nick Clifton  <nickc@redhat.com>
-+2020-07-24  Nick Clifton  <nickc@redhat.com>
+@@ -1,3 +1,16 @@
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
++
++	* configure: Regenerate.
++	* po/ld.pot: Regenerate.
++
++2020-09-15  Hans-Peter Nilsson  <hp@axis.com>
++
++	Backport from mainline:
++	PR ld/26589
++	* testsuite/ld-elf/pr26589.d, testsuite/ld-elf/locref3.s: New test.
++
+ 2020-09-10  Alan Modra  <amodra@gmail.com>
  
--	Import from mainline:
--	2020-05-18  Nick Clifton  <nickc@redhat.com>
+ 	Apply from master
+@@ -14,40 +27,1855 @@
+ 	* testsuite/ld-powerpc/tprelbad.d: New test.
+ 	* testsuite/ld-powerpc/powerpc.exp: Run them.
+ 
+-2020-06-03  Nick Clifton  <nickc@redhat.com>
++2020-08-16  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR binutils/26389
++	* testsuite/ld-plugin/lto.exp: Run PR binutils/26389 test.
++	* testsuite/ld-plugin/pr26389.c: New file.
++	* testsuite/ld-plugin/pr26389.d: Likewise.
++
++2020-08-14  Tamar Christina  <tamar.christina@arm.com>
++
++	Backport from master.
++	2020-08-14  Tamar Christina  <tamar.christina@arm.com>
++
++	* testsuite/ld-arm/thumb-plt-got.d: Relax regexpr.
++	* testsuite/ld-arm/thumb-plt.d: Likewise.
++
++2020-08-07  David Faust  <david.faust@oracle.com>
++
++	* testsuite/ld-bpf/call-3.s: New file.
++	* testsuite/ld-bpf/call-3.d: Likewise.
++
++2020-08-05  David Faust  <david.faust@oracle.com>
++
++	* testsuite/ld-bpf/call-2.s: New file.
++	* testsuite/ld-bpf/call-2.d: Likewise.
++	* testsuite/ld-bpf/reloc-data-be.d: Likewise.
++	* testsuite/ld-bpf/reloc-data-le.d: Likewise.
++	* testsuite/ld-bpf/reloc-data.s: Likewise.
++	* testsuite/ld-bpf/reloc-insn-external-be.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn-external-le.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn-external.s: Likewise.
++	* testsuite/ld-bpf/reloc-insn32-be.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn32-le.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn32.s: Likewise.
++	* testsuite/ld-bpf/reloc-insn64-be.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn64-le.d: Likewise.
++	* testsuite/ld-bpf/reloc-insn64.s: Likewise.
++
++2020-08-03  Alan Modra  <amodra@gmail.com>
++
++	* ldlex.l (yy_create_string_buffer): Use xmalloc rather than malloc.
++	* lexsup.c (parse_args): Likewise.
++
++2020-08-03  Alan Modra  <amodra@gmail.com>
++
++	PR 26328
++	* configure.ac: AC_CHECK_DECLS asprintf.
++	* configure: Regenerate.
++	* config.in: Regenerate.
++
++2020-07-24  Nick Clifton  <nickc@redhat.com>
++
 +	* configure: Regenerate.
 +
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
@@ -43424,7 +43923,9 @@ index 0006ace73e..6dcd55ccd2 100644
 +	executable files to simple warnings.
 +
 +2020-07-10  Alan Modra  <amodra@gmail.com>
-+
+ 
+-	Import from mainline:
+-	2020-05-18  Nick Clifton  <nickc@redhat.com>
 +	* ld.texi (PowerPC64 ELF64): Document --no-inline-optimize,
 +	--power10-stubs and --no-power10-stubs.
 +
@@ -44564,7 +45065,9 @@ index 0006ace73e..6dcd55ccd2 100644
 +	PR 25882
 +	* ldlang.c (lang_check): Call bfd_merge_private_bfd_data for
 +	shared libraries.
-+
+ 
+-	Backport from mainline.
+-	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
 +2020-05-01  Alan Modra  <amodra@gmail.com>
 +
 +	* po/BLD-POTFILES.in: Regenerate.
@@ -44953,9 +45456,7 @@ index 0006ace73e..6dcd55ccd2 100644
 +	* testsuite/ld-arm/arm-elf.exp (thumb-plt, thumb-plt-got): Skip for NaCL.
 +
 +2020-04-01  Nick Clifton  <nickc@redhat.com>
- 
--	Backport from mainline.
--	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
++
 +	PR ld/25747
 +	* ldfile.c (ldfile_open_file): If a search for a library fails,
 +	but there is a file that would match if it had a "lib" prefix to
@@ -45127,7 +45628,7 @@ index 0006ace73e..6dcd55ccd2 100644
  
  	* testplug.c (parse_symdefstr): Use %hhi to read sym->def, and
  	clear new fields.
-@@ -39,11 +1805,173 @@
+@@ -55,11 +1883,173 @@
  	* testplug3.c (parse_symdefstr): Likewise.
  	* testplug4.c (parse_symdefstr): Likewise.
  
@@ -45305,13 +45806,15 @@ index 0006ace73e..6dcd55ccd2 100644
  
  2020-02-22  Alan Modra  <amodra@gmail.com>
  
-@@ -51,10 +1979,35 @@
+@@ -67,10 +2057,35 @@
  	* NEWS: Mention better "PHDR segment not covered by LOAD segment"
  	checking.
  
 -2020-02-14  Nick Clifton  <nickc@redhat.com>
 +2020-02-19  Sergey Belyashov  <sergey.belyashov@gmail.com>
-+
+ 
+-	Import from the mainline:
+-	2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
 +	PR 25537
 +	* emultempl/z80.em: Remove machine compatability checking.
 +
@@ -45335,16 +45838,14 @@ index 0006ace73e..6dcd55ccd2 100644
 +	* testsuite/ld-z80/relocs_f_z80n.d: Likewise.
 +
 +2020-02-19  Alan Modra  <amodra@gmail.com>
- 
--	Import from the mainline:
--	2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
++
 +	* testsuite/ld-plugin/pr25355.d: Allow alpha-linux nm result.
 +
 +2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR binutils/25355
  	* testsuite/ld-plugin/lto.exp: Run PR binutils/25355 test.
-@@ -63,19 +2016,182 @@
+@@ -79,19 +2094,182 @@
  	* testsuite/lib/ld-lib.exp (run_cc_link_tests): Support compile
  	only dump.
  
@@ -45537,7 +46038,7 @@ index 0006ace73e..6dcd55ccd2 100644
  	PR 25477
  	* ldelf.c (ldelf_check_ld_so_conf): Add prefix parameter and
  	correct concat.
-@@ -86,12 +2202,21 @@
+@@ -102,12 +2280,21 @@
  	* Makefile.am: Correct z80 dependencies.
  	* Makefile.in: Regenerate.
  
@@ -45562,7 +46063,7 @@ index 0006ace73e..6dcd55ccd2 100644
  	PR ld/25458
  	* testsuite/ld-elf/pr25458.map: New file.
  	* testsuite/ld-elf/pr25458.rd: Likewise.
-@@ -99,11 +2224,93 @@
+@@ -115,11 +2302,93 @@
  	* testsuite/ld-elf/pr25458b.s: Likewise.
  	* testsuite/ld-elf/shared.exp: Run PR ld/25458 test.
  
@@ -45657,14 +46158,30 @@ index 0006ace73e..6dcd55ccd2 100644
  
  	* testsuite/ld-x86-64/align-branch-1.d: Loosen instruction regexps
 diff --git a/gold/ChangeLog b/gold/ChangeLog
-index 41deeeeea3..196b597d32 100644
+index 20a5e046f2..85fefa989f 100644
 --- a/gold/ChangeLog
 +++ b/gold/ChangeLog
-@@ -1,6 +1,193 @@
--2020-02-01  Nick Clifton  <nickc@redhat.com>
-+2020-07-24  Nick Clifton  <nickc@redhat.com>
+@@ -1,3 +1,9 @@
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
++
++	* po/gold.pot: Regenerate.
++
+ 2020-09-10  Alan Modra  <amodra@gmail.com>
  
--	Binutils 2.34 release.
+ 	Apply from master
+@@ -8,9 +14,200 @@
+ 	(Target_powerpc::Relocate::relocate): Control tprel optimisation
+ 	with tprel_opt_ and enable for 32-bit.
+ 
+-2020-02-01  Nick Clifton  <nickc@redhat.com>
++2020-08-12  Nick Clifton  <nickc@redhat.com>
++
++	* po/sr.po: Updated Serbian translation.
++
++2020-07-24  Nick Clifton  <nickc@redhat.com>
++
 +	2.35 Release:
 +	* po/gold.pot: Regenerate.
 +
@@ -45851,7 +46368,8 @@ index 41deeeeea3..196b597d32 100644
 +    * options.h (General_options): Add --no-rosegment option.
 +
 +2020-02-24  Nick Clifton  <nickc@redhat.com>
-+
+ 
+-	Binutils 2.34 release.
 +	* po/fr.po: Update French translation.
  
  2020-01-20  Nick Clifton  <nickc@redhat.com>
@@ -45976,11 +46494,17 @@ index 362bd064d0..19d2b702d6 100644
  
  	Update copyright years.
 diff --git a/gprof/ChangeLog b/gprof/ChangeLog
-index 656dfce9ad..2c7b8678b0 100644
+index 656dfce9ad..511e9ee848 100644
 --- a/gprof/ChangeLog
 +++ b/gprof/ChangeLog
-@@ -1,11 +1,54 @@
+@@ -1,11 +1,60 @@
 -2020-02-01  Nick Clifton  <nickc@redhat.com>
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
++
++	* configure: Regenerate.
++
 +2020-07-24  Nick Clifton  <nickc@redhat.com>
  
  	* configure: Regenerate.
@@ -46037,7 +46561,7 @@ index 656dfce9ad..2c7b8678b0 100644
  
  2020-01-23  Nick Clifton  <nickc@redhat.com>
  
-@@ -23,7 +66,6 @@
+@@ -23,7 +72,6 @@
  2020-01-18  Nick Clifton  <nickc@redhat.com>
  
  	* configure: Regenerate.
