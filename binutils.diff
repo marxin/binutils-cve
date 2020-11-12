@@ -12189,10 +12189,85 @@ index 7b9b542349..a4f37eb319 100644
  
  	* aclocal.m4: Regenerate.
 diff --git a/bfd/ChangeLog b/bfd/ChangeLog
-index d533d05793..7608f9b0ba 100644
+index ad6f9346c0..2bca0948f6 100644
 --- a/bfd/ChangeLog
 +++ b/bfd/ChangeLog
-@@ -1,3 +1,23 @@
+@@ -1,9 +1,98 @@
++2020-10-09  Alan Modra  <amodra@gmail.com>
++
++	* elf64-ppc.c (write_plt_relocs_for_local_syms): Don't do local
++	entry offset optimisation.
++
+ 2020-10-07  H.J. Lu  <hongjiu.lu@intel.com>
+ 
+ 	PR ld/26711
+ 	* elfxx-x86.c (_bfd_x86_elf_merge_gnu_properties): Merge -z ibt
+ 	and -z shstk only with GNU_PROPERTY_X86_FEATURE_1_AND.
+ 
++2020-09-28  Alan Modra  <amodra@gmail.com>
++
++	PR 26656
++	* elf64-ppc.c (ppc_build_one_stub, ppc_size_one_stub): Check for
++	NULL stub_entry->h before calling is_tls_get_addr.
++
++2020-09-26  Alan Modra  <amodra@gmail.com>
++
++	* elf64-ppc.c (GLINK_PLTRESOLVE_SIZE): Depend on has_plt_localentry0.
++	(LD_R0_0R11, ADD_R11_R0_R11): Define.
++	(ppc64_elf_tls_setup): Disable params->plt_localentry0 when power10
++	code detected.
++	(ppc64_elf_size_stubs): Update __glink_PLTresolve eh_frame.
++	(ppc64_elf_build_stubs): Move r2 save to start of __glink_PLTresolve,
++	and only emit for has_plt_localentry0.  Don't use r2 in the stub.
++
++2020-09-24  Nick Clifton  <nickc@redhat.com>
++
++	Import from mainline:
++	2020-08-29  Nick Clifton  <nickc@redhat.com>
++
++	PR 26520
++	* dwarf2.c (scan_unit_for_symbols): Add member entries to the
++	variable table.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	PR 26656
++	* elf64-ppc.c (plt_stub_size): Add "odd" param.  Use it with
++	size_power10_offset rather than calculating from start of stub.
++	Add size for notoc tls_get_addr_opt stub.
++	(plt_stub_pad): Add "odd" param, pass to plt_stub_size.
++	(build_tls_get_addr_head, build_tls_get_addr_tail): New functions.
++	(build_tls_get_addr_stub): Delete.
++	(ppc_build_one_stub): Use a temp for htab->params->stub_bfd.
++	Emit notoc tls_get_addr_opt stub.  Move eh_frame code to
++	suit.  Adjust code to use bfd_tls_get_addr_head/tail in place
++	of build_tls_get_addr_stub.
++	(ppc_size_one_stub): Size notoc tls_get_addr_opt stub.
++	Adjust plt_stub_size and plt_stub_pad calls.  Correct "odd"
++	when padding stub.  Size eh_frame for notoc stub too.
++	Correct lr_restore value.
++	(ppc64_elf_relocate_section): Don't skip over first insn of
++	notoc tls_get_addr_opt stub.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	PR 26655
++	* elf64-ppc.c (ppc64_elf_func_desc_adjust): Rename to..
++	(ppc64_elf_edit): Call params->edit.
++	(ppc64_elf_tls_setup): Don't call _bfd_elf_tls_setup.  Return a
++	bfd_boolean.
++	* elf64-ppc.h (struct ppc64_elf_params): Add "edit".
++	(ppc64_elf_tls_setup): Update declaration.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	Apply from master
++	2020-08-13  Alan Modra  <amodra@gmail.com>
++	* elf64-ppc.h (struct ppc64_elf_params): Add no_pcrel_opt.
++	* elf64-ppc.c (ppc64_elf_relocate_section): Disable GOT reloc
++	optimizations when --no-toc-optimize.  Disable R_PPC64_PCREL_OPT
++	optimization when --no-pcrel-optimize.
++
 +2020-09-19  Nick Clifton  <nickc@redhat.com>
 +
 +	* development.sh (development): Set to true.
@@ -12216,7 +12291,7 @@ index d533d05793..7608f9b0ba 100644
  2020-09-10  Alan Modra  <amodra@gmail.com>
  
  	Apply from master
-@@ -14,48 +34,1859 @@
+@@ -20,48 +109,1859 @@
  	Clear do_tls_opt on odd instructions.
  	(ppc64_elf_relocate_section): Don't sanity check TPREL16_HA.
  
@@ -12234,7 +12309,9 @@ index d533d05793..7608f9b0ba 100644
 +	secondary relocs.
 +	* elfcode.h (elf_write_relocs): Only call write_secondary_relocs
 +	on sections which have associated secondary relocs.
-+
+ 
+-	Backport from mainline.
+-	2020-07-30  Szabolcs Nagy  <szabolcs.nagy@arm.com>
 +2020-08-26  David Faust  <david.faust@oracle.com>
 +
 +	* archures.c (bfd_mach_xbpf): Define.
@@ -12275,9 +12352,7 @@ index d533d05793..7608f9b0ba 100644
 +	* elf32-v850.c (v850_elf_symbol_processing): Likewise.
 +	* elfxx-mips.c (_bfd_mips_elf_symbol_processing): Likewise.
 +	* ecoff.c (ecoff_set_symbol_info, ecoff_link_add_externals): Likewise.
- 
--	Backport from mainline.
--	2020-07-30  Szabolcs Nagy  <szabolcs.nagy@arm.com>
++
 +2020-08-12  Nick Clifton  <nickc@redhat.com>
 +
 +	* po/ru.po: Updated Russian translation.
@@ -13621,7 +13696,9 @@ index d533d05793..7608f9b0ba 100644
 +	PR 25882
 +	* elf32-tic6x.c (elf32_tic6x_merge_attributes): Don't transfer
 +	Tag_ABI_PIC or Tag_ABI_PID from dynamic objects to the output.
-+
+ 
+-	Backport from mainline.
+-	2020-04-21  Tamar Christina  <tamar.christina@arm.com>
 +2020-05-01  Alan Modra  <amodra@gmail.com>
 +
 +	PR 25882
@@ -13653,9 +13730,7 @@ index d533d05793..7608f9b0ba 100644
 +
 +	* aoutx.h (swap_std_reloc_out): Special case 64 bit relocations.
 +	(aout_link_reloc_link_order): Likewise. Make r_length an unsigned.
- 
--	Backport from mainline.
--	2020-04-21  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-04-28  Alan Modra  <amodra@gmail.com>
 +
 +	* vms-alpha.c (_bfd_vms_slurp_etir): Correct divide by zero check.
@@ -13730,13 +13805,13 @@ index d533d05793..7608f9b0ba 100644
 +	(elf64_alpha_check_relocs): Set sec instead of reltext.  Warn
 +	DT_TEXTREL with -M.
 +	(elf64_alpha_calc_dynrel_sizes): Warn DT_TEXTREL with -M.
- 
--	Backport from mainline.
--	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-04-21  Nick Clifton  <nickc@redhat.com>
 +
 +	* po/sr.po: Updated Serbian translation.
-+
+ 
+-	Backport from mainline.
+-	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
 +2020-04-21  Alan Modra  <amodra@gmail.com>
 +
 +	* elf32-sh.c (sh_elf_relocate_section): Remove STO_SH5_ISA32
@@ -14090,7 +14165,7 @@ index d533d05793..7608f9b0ba 100644
  
  	* configure.ac (HAVE_EXECUTABLE_SUFFIX): Removed.
  	(EXECUTABLE_SUFFIX): Likewise.
-@@ -79,10 +1910,9 @@
+@@ -85,10 +1985,9 @@
  	(try_load_plugin): Likewise.
  	(bfd_plugin_canonicalize_symtab): Likewise.
  	* plugin.h (bfd_plugin_set_program_name): Remove int argument.
@@ -14103,7 +14178,7 @@ index d533d05793..7608f9b0ba 100644
  
  	PR binutils/25640
  	* plugin.c (plugin_list_entry): Add has_symbol_type.
-@@ -93,20 +1923,580 @@
+@@ -99,20 +1998,580 @@
  	(bfd_plugin_canonicalize_symtab): Use LTO plugin symbol type if
  	available.
  
@@ -14565,16 +14640,16 @@ index d533d05793..7608f9b0ba 100644
 +	* vms-alpha.c (alpha_vms_object_p): Use _bfd_malloc_and_read.
 +	Remove duplicate undersize check.
 +
-+2020-02-27  Alan Modra  <amodra@gmail.com>
-+
-+	PR 24511
-+	* mmo.c (mmo_scan): Set SEC_DATA for .data.
-+
  2020-02-27  Alan Modra  <amodra@gmail.com>
  
  	PR 24511
 -	* syms.c (bfd_decode_symclass): Reverse order of coff_section_type
 -	and decode_section_type calls.
++	* mmo.c (mmo_scan): Set SEC_DATA for .data.
++
++2020-02-27  Alan Modra  <amodra@gmail.com>
++
++	PR 24511
 +	* syms.c (stt): Trim off all but 'e', 'i' and 'p' entries.
 +	(coff_section_type): Adjust comment.
 +	(decode_section_type): Likewise.  Call coff_section_type before
@@ -14689,7 +14764,7 @@ index d533d05793..7608f9b0ba 100644
  
  2020-02-25  H.J. Lu  <hongjiu.lu@intel.com>
  
-@@ -118,22 +2508,427 @@
+@@ -124,22 +2583,427 @@
  	set.
  	* plugin.h (bfd_plugin_set_program_name): Add an int argument.
  
@@ -15120,7 +15195,7 @@ index d533d05793..7608f9b0ba 100644
  
  	* plugin.c (try_load_plugin): Make plugin_list_iter an argument
  	and use it if it isn't NULL.  Remove has_plugin_p argument.  Add
-@@ -145,18 +2940,26 @@
+@@ -151,18 +3015,26 @@
  	(build_plugin_list): New function.
  	(load_plugin): Call build_plugin_list and use plugin_list.
  
@@ -15150,7 +15225,7 @@ index d533d05793..7608f9b0ba 100644
  
  	PR binutils/25355
  	* configure.ac (HAVE_EXECUTABLE_SUFFIX): New AC_DEFINE.
-@@ -190,92 +2993,298 @@
+@@ -196,92 +3068,298 @@
  	* plugin.h (plugin_data_struct): Add real_bfd, real_nsyms and
  	real_syms.
  
@@ -15829,15 +15904,43 @@ index 3583e5bd34..e1b040d582 100644
  
  	* Makefile.am: Append CXX_DIALECT to CXX.
 diff --git a/opcodes/ChangeLog b/opcodes/ChangeLog
-index 982454e421..b53a2bba98 100644
+index 982454e421..fada4f8c94 100644
 --- a/opcodes/ChangeLog
 +++ b/opcodes/ChangeLog
-@@ -1,12 +1,1188 @@
+@@ -1,12 +1,1216 @@
 -2020-07-06  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
-+2020-09-19  Nick Clifton  <nickc@redhat.com>
++2020-10-07  H.J. Lu  <hongjiu.lu@intel.com>
  
 -	Backport from mainline.
 -	2020-05-26  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
++	PR gas/26685
++	* i386-dis.c (mod_table): Replace Gv with Gdq on movdiri.
++
++2020-10-07  Jan Beulich  <jbeulich@suse.com>
++
++	* i386-dis.c (OP_E_memory): Revert previous change.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	Apply from master
++	2020-08-19  Alan Modra  <amodra@gmail.com>
++	* ppc-opc.c (powerpc_opcodes): Replace OBF with BF for vcmpsq,
++	vcmpuq and xvtlsbb.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* ppc-opc.c (powerpc_opcodes): Add many mtspr and mfspr extended
++	instructions.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* ppc-opc.c (powerpc_opcodes): Add exser, msgsndu, msgclru.
++	Enable icbt for power5, miso for power8.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* ppc-opc.c (powerpc_opcodes): Prioritise mtfprd and mtvrd over
++	mtvsrd, and similarly for mfvsrd.
++
++2020-09-19  Nick Clifton  <nickc@redhat.com>
++
 +	This is the 2.35.1 point release.
 +
 +	* configure: Regenerate.
@@ -17024,7 +17127,7 @@ index 982454e421..b53a2bba98 100644
  2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR gas/25516
-@@ -25,24 +1201,88 @@
+@@ -25,24 +1229,88 @@
  	Cpu64 and Intel64Only.  Remove AMD64 from sysenter/sysenter.
  	* i386-tbl.h: Regenerated.
  
@@ -17096,16 +17199,16 @@ index 982454e421..b53a2bba98 100644
 +	(fldenv, fnstenv, fstenv, fnsave, fsave, frstor): Drop
 +	DefaultSize.
 +	* i386-tbl.h: Re-generate.
- 
--	Backport from mainline.
--	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-01-30  Alan Modra  <amodra@gmail.com>
 +
 +	* tic4x-dis.c (tic4x_dp): Make unsigned.
 +
 +2020-01-27  H.J. Lu  <hongjiu.lu@intel.com>
 +	    Jan Beulich  <jbeulich@suse.com>
-+
+ 
+-	Backport from mainline.
+-	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
 +	PR binutils/25445
 +	* i386-dis.c (MOVSXD_Fixup): New function.
 +	(movsxd_mode): New enum.
@@ -17122,7 +17225,7 @@ index 982454e421..b53a2bba98 100644
  
  	PR 25403
  	* aarch64-tbl.h (struct aarch64_opcode): Re-order cfinv.
-@@ -50,6 +1290,11 @@
+@@ -50,6 +1318,11 @@
  	* aarch64-dis-2.c: Likewise.
  	* aarch64-opc-2.c: Likewise.
  
@@ -17134,7 +17237,7 @@ index 982454e421..b53a2bba98 100644
  2020-01-21  Jan Beulich  <jbeulich@suse.com>
  
  	* i386-opc.tbl (vcvtneps2bf16x): Add Broadcast, Xmmword, and
-@@ -63,6 +1308,14 @@
+@@ -63,6 +1336,14 @@
  	* po/pt_BR.po: Updated Brazilian Portuguese translation.
  	* po/uk.po: Updated Ukranian translation.
  
@@ -18333,24 +18436,141 @@ index 19fc6cd55c..12795fc497 100644
  
  	Binutils 2.34 branch created.
 diff --git a/gas/ChangeLog b/gas/ChangeLog
-index 5eb92e3383..26c703531d 100644
+index 5eb92e3383..417923ca11 100644
 --- a/gas/ChangeLog
 +++ b/gas/ChangeLog
-@@ -1,17 +1,813 @@
+@@ -1,17 +1,930 @@
 -2020-07-06  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
++2020-11-05  Alex Coplan  <alex.coplan@arm.com>
++
++	* config/tc-aarch64.c (aarch64_cpus): Add neoverse-n2.
++	* doc/c-aarch64.texi: Document support for Neoverse N2.
++
++2020-10-21  Srinath Parvathaneni  <srinath.parvathaneni@arm.com>
++
++	PR target/26763
++	* config/tc-arm.c (parse_address_main): Add new MVE addressing mode
++	check.
++	* testsuite/gas/arm/mve-vldr-vstr-bad.d: New test.
++	* testsuite/gas/arm/mve-vldr-vstr-bad.l: Likewise.
++	* testsuite/gas/arm/mve-vldr-vstr-bad.s: Likewise.
++
++2020-10-09  Alex Coplan  <alex.coplan@arm.com>
++
++	* config/tc-arm.c (arm_cpus): Add Neoverse N2.
++	* doc/c-arm.texi: Document -mcpu=neoverse-n2.
++
++2020-10-09  Alex Coplan  <alex.coplan@arm.com>
++
++	* config/tc-arm.c (arm_cpus): Add Neoverse V1.
++	* doc/c-arm.texi: Document Neoverse V1 support.
++
++2020-10-07  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR gas/26685
++	* config/tc-i386.c (process_suffix): Also check the register
++	operand for the address size prefix if the memory operand has
++	no real registers.
++	* testsuite/gas/i386/enqcmd-16bit.d: New file.
++	* testsuite/gas/i386/enqcmd-16bit.s: Likewise.
++	* testsuite/gas/i386/movdir-16bit.d: Likewise.
++	* testsuite/gas/i386/movdir-16bit.s: Likewise.
++	* testsuite/gas/i386/enqcmd.s: Add tests with symbol and DISP.
++	* testsuite/gas/i386/x86-64-enqcmd.s: Likewise.
++	* testsuite/gas/i386/x86-64-movdir.s: Likewise.
++	* testsuite/gas/i386/movdir.s: Add tests with symbol and DISP.
++	Remove the .code16 test.
++	* testsuite/gas/i386/i386.exp: Run movdir-16bit and enqcmd-16bit.
++	* testsuite/gas/i386/x86-64-enqcmd-intel.d: Updated.
++	* testsuite/gas/i386/x86-64-enqcmd.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir-intel.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir.d: Likewise.
++	* testsuite/gas/i386/enqcmd-intel.d: Likewise.
++	* testsuite/gas/i386/enqcmd.d: Likewise.
++	* testsuite/gas/i386/movdir-intel.d: Likewise.
++	* testsuite/gas/i386/movdir.d: Likewise.
++	* testsuite/gas/i386/x86-64-enqcmd-intel.d: Likewise.
++	* testsuite/gas/i386/x86-64-enqcmd.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir-intel.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir.d: Likewise.
++
++2020-10-07  H.J. Lu  <hongjiu.lu@intel.com>
++
++	PR gas/26685
++	* config/tc-i386.c (process_suffix): Check the register operand
++	for the address size prefix if the memory operand is symbol(%rip).
++	* testsuite/gas/i386/x86-64-enqcmd.s: Add tests with RIP-relative
++	addressing.
++	* testsuite/gas/i386/x86-64-movdir.s: Likewise.
++	* testsuite/gas/i386/x86-64-enqcmd-intel.d: Updated.
++	* testsuite/gas/i386/x86-64-enqcmd.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir-intel.d: Likewise.
++	* testsuite/gas/i386/x86-64-movdir.d: Likewise.
++
++2020-10-07  Jan Beulich  <jbeulich@suse.com>
++
++	* testsuite/gas/i386/evex-no-scale-64.d,
++	testsuite/gas/i386/addr32.d,
++	testsuite/gas/i386/x86-64-addr32-intel.d,
++	testsuite/gas/i386/x86-64-addr32.d: Adjust expectations.
++
++2020-10-06  Alex Coplan  <alex.coplan@arm.com>
++
++	PR 26699
++	* config/tc-aarch64.c (asm_barrier_opt): Delete.
++	(parse_barrier): Fix bogus type punning.
++	* testsuite/gas/aarch64/system.d: Update disassembly.
++	* testsuite/gas/aarch64/system.s: Add isb sy test.
++
++2020-10-02  Alex Coplan  <alex.coplan@arm.com>
++
++	* config/tc-aarch64.c (aarch64_cpus): Add Neoverse V1.
++	* doc/c-aarch64.texi: Document Neoverse V1 support.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	Apply from master
++	2020-08-19  Alan Modra  <amodra@gmail.com>
++	* testsuite/gas/ppc/int128.s: Correct vcmpuq.
++	* testsuite/gas/ppc/int128.d: Update.
++	* testsuite/gas/ppc/xvtlsbb.d: Update.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* testsuite/gas/ppc/power8.d,
++	* testsuite/gas/ppc/power8.s: Add miso.
++	* testsuite/gas/ppc/power9.d,
++	* testsuite/gas/ppc/power8.s: Add exser, msgsndu, msgclru.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* testsuite/gas/ppc/power8.d: Update.
++	* testsuite/gas/ppc/vsx2.d: Update.
++
++	2020-08-10  Alan Modra  <amodra@gmail.com>
++	* config/tc-ppc.c (md_assemble): Error for lmw, stmw, lswi, lswx,
++	stswi, or stswx in little-endian mode.
++	* testsuite/gas/ppc/476.d,
++	* testsuite/gas/ppc/476.s: Delete lmw, stmw, lswi, lswx, stswi, stswx.
++	* testsuite/gas/ppc/a2.d,
++	* testsuite/gas/ppc/a2.s: Move lmw, stmw, lswi, lswx, stswi, stswx..
++	* testsuite/gas/ppc/be.d,
++	* testsuite/gas/ppc/be.s: ..to here, new big-endian only test.
++	* testsuite/gas/ppc/le_error.d,
++	* testsuite/gas/ppc/le_error.l: New little-endian test.
++	* testsuite/gas/ppc/ppc.exp: Run new tests.
++
 +2020-09-19  Nick Clifton  <nickc@redhat.com>
++
++	This is the 2.35.1 point release.
  
 -	Backport from mainline.
 -	2020-05-26  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
-+	This is the 2.35.1 point release.
++	* configure: Regenerate.
++	* po/gas.pot: Regenerate.
  
 -	* testsuite/gas/s390/zarch-z13.d: Add regexp checks for vector
 -	load/store instruction variants with alignment hints.
 -	* testsuite/gas/s390/zarch-z13.s: Emit new vector load/store
 -	instruction variants with alignment hints.
-+	* configure: Regenerate.
-+	* po/gas.pot: Regenerate.
-+
 +2020-09-19  Nick Clifton  <nickc@redhat.com>
 +
 +	Import from mainline:
@@ -18775,12 +18995,12 @@ index 5eb92e3383..26c703531d 100644
 +	* testsuite/gas/i386/i386.exp: Run new test.
 +
 +2020-06-26  Pat Bernardi  <bernardi@adacore.com>
- 
--2020-06-10  Alex Coplan  <alex.coplan@arm.com>
++
 +	* config/tc-m68k.c (m68k_elf_gnu_attribute): New function.
 +	(md_pseudo_table): Handle "gnu_attribute".
 +	* doc/as.texi: Document GNU attribute for M68K.
-+
+ 
+-2020-06-10  Alex Coplan  <alex.coplan@arm.com>
 +2020-06-25  Nick Clifton  <nickc@redhat.com>
 +
 +	PR 26141
@@ -19160,7 +19380,7 @@ index 5eb92e3383..26c703531d 100644
  	* write.c (relax_segment): Fix handling of negative offset when
  	relaxing an rs_org frag.
  	* testsuite/gas/aarch64/org-neg.d: New test.
-@@ -21,18 +817,346 @@
+@@ -21,18 +934,346 @@
  	* testsuite/gas/arm/org-neg.l: Error output for test.
  	* testsuite/gas/arm/org-neg.s: Input for test.
  
@@ -19508,7 +19728,7 @@ index 5eb92e3383..26c703531d 100644
  2020-05-15  Alan Modra  <amodra@gmail.com>
  	    Alex Coplan  <alex.coplan@arm.com>
  
-@@ -46,29 +1170,558 @@
+@@ -46,29 +1287,558 @@
  	* testsuite/gas/all/assign-bad-recursive.s: Assembly for test.
  	* testsuite/gas/all/gas.exp: Run it.
  
@@ -19612,13 +19832,13 @@ index 5eb92e3383..26c703531d 100644
 +	* testsuite/gas/ppc/power10.s: Likewise.
 +
 +2020-05-11  Peter Bergner  <bergner@linux.ibm.com>
- 
--	Backport from mainline.
--	2020-05-04  Andre Vieira  <andre.simoesdiasvieira@arm.com>
++
 +	* testsuite/gas/ppc/power10.s: New test.
 +	* testsuite/gas/ppc/power10.d: Likewise.
 +	* testsuite/gas/ppc/ppc.exp: Run it.
-+
+ 
+-	Backport from mainline.
+-	2020-05-04  Andre Vieira  <andre.simoesdiasvieira@arm.com>
 +2020-05-11  Alan Modra  <amodra@gmail.com>
 +
 +	* config/tc-ppc.c (md_assemble): Update for PPC_OPCODE_POWER10
@@ -20076,7 +20296,7 @@ index 5eb92e3383..26c703531d 100644
  
  	PR 25660
  	*  config/tc-arm.c (operand_parse_code): Add OP_RNSDMQR and OP_oRNSDMQ.
-@@ -82,6 +1735,768 @@
+@@ -82,6 +1852,768 @@
  	* testsuite/gas/arm/mve-vaddsub-it-bad.d: New test.
  	* testsuite/gas/arm/nomve-vaddsub-it.d: New test.
  
@@ -20845,7 +21065,7 @@ index 5eb92e3383..26c703531d 100644
  2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR gas/25516
-@@ -95,34 +2510,137 @@
+@@ -95,34 +2627,137 @@
  	-mamd64 to x86-64-sysenter-amd.
  	* testsuite/gas/i386/x86-64-sysenter.d: New file.
  
@@ -21000,13 +21220,15 @@ index 5eb92e3383..26c703531d 100644
  	PR gas/25472
  	* config/tc-arm.c (armv8m_main_ext_table): Refactored +dsp adding.
  	(armv8_1m_main_ext_table): Refactored +dsp adding and enabled dsp for
-@@ -152,15 +2670,190 @@
+@@ -152,15 +2787,190 @@
  	* po/fr.po: Updated French translation.
  	* po/ru.po: Updated Russian translation.
  
 -2020-01-27  Tamar Christina  <tamar.christina@arm.com>
 +2020-01-31  Richard Sandiford  <richard.sandiford@arm.com>
-+
+ 
+-	Backport from mainline.
+-	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
 +	* testsuite/gas/aarch64/sve-bfloat-movprfx.s: Use .h rather than
 +	.s for the movprfx.
 +	* testsuite/gas/aarch64/sve-bfloat-movprfx.d: Update accordingly.
@@ -21088,9 +21310,7 @@ index 5eb92e3383..26c703531d 100644
 +	* testsuite/gas/elf/elf.exp: Likewise.
 +	* testsuite/gas/macros/macros.exp: Likewise.
 +	* testsuite/lib/gas-defs.exp: Likewise.
- 
--	Backport from mainline.
--	2020-01-27  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-01-27  Tamar Christina  <tamar.christina@arm.com>
  
  	PR 25403
@@ -21194,7 +21414,7 @@ index 5eb92e3383..26c703531d 100644
  2020-01-21  Jan Beulich  <jbeulich@suse.com>
  
  	* testsuite/gas/i386/avx512_bf16_vl.s,
-@@ -174,6 +2867,16 @@
+@@ -174,6 +2984,16 @@
  
  	* po/uk.po: Updated Ukranian translation.
  
@@ -43740,10 +43960,41 @@ index d13b1e80dd..69ab913d9f 100644
  
  	* configure, Makefile.in: Rebuild.
 diff --git a/ld/ChangeLog b/ld/ChangeLog
-index bb9dddb0c8..4eec7d2977 100644
+index d884cdac82..62efcf2ba0 100644
 --- a/ld/ChangeLog
 +++ b/ld/ChangeLog
-@@ -1,3 +1,16 @@
+@@ -24,6 +24,47 @@
+ 	* testsuite/ld-x86-64/pr26711-3.d: Likewise.
+ 	* testsuite/ld-x86-64/pr26711.s: Likewise.
+ 
++2020-09-26  Alan Modra  <amodra@gmail.com>
++
++	* testsuite/ld-powerpc/elfv2so.d,
++	* testsuite/ld-powerpc/notoc2.d,
++	* testsuite/ld-powerpc/tlsdesc.wf,
++	* testsuite/ld-powerpc/tlsdesc2.d,
++	* testsuite/ld-powerpc/tlsdesc2.wf,
++	* testsuite/ld-powerpc/tlsopt5.d,
++	* testsuite/ld-powerpc/tlsopt5.wf,
++	* testsuite/ld-powerpc/tlsopt6.d,
++	* testsuite/ld-powerpc/tlsopt6.wf: Update __glink_PLTresolve.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	PR 26655
++	* emultempl/ppc64elf.em (params): Add ppc_edit.
++	(ppc_before_allocation): Split off some edit functions to..
++	(ppc_edit): ..this, new function.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	Apply from master
++	2020-08-13  Alan Modra  <amodra@gmail.com>
++	* emultempl/ppc64elf.em (params): Init new field.
++	(enum ppc64_opt): Add OPTION_NO_PCREL_OPT.
++	(PARSE_AND_LIST_LONGOPTS, PARSE_AND_LIST_OPTIONS),
++	(PARSE_AND_LIST_ARGS_CASES): Support --no-pcrel-optimize.
++
 +2020-09-19  Nick Clifton  <nickc@redhat.com>
 +
 +	This is the 2.35.1 point release.
@@ -43760,7 +44011,7 @@ index bb9dddb0c8..4eec7d2977 100644
  2020-09-10  Alan Modra  <amodra@gmail.com>
  
  	Apply from master
-@@ -14,40 +27,1855 @@
+@@ -40,40 +81,1855 @@
  	* testsuite/ld-powerpc/tprelbad.d: New test.
  	* testsuite/ld-powerpc/powerpc.exp: Run them.
  
@@ -43923,9 +44174,7 @@ index bb9dddb0c8..4eec7d2977 100644
 +	executable files to simple warnings.
 +
 +2020-07-10  Alan Modra  <amodra@gmail.com>
- 
--	Import from mainline:
--	2020-05-18  Nick Clifton  <nickc@redhat.com>
++
 +	* ld.texi (PowerPC64 ELF64): Document --no-inline-optimize,
 +	--power10-stubs and --no-power10-stubs.
 +
@@ -44957,7 +45206,9 @@ index bb9dddb0c8..4eec7d2977 100644
 +	* testsuite/ld-riscv-elf/attr-merge-strict-align-05.d: Likewise.
 +
 +2020-05-20  Alan Modra  <amodra@gmail.com>
-+
+ 
+-	Import from mainline:
+-	2020-05-18  Nick Clifton  <nickc@redhat.com>
 +	PR 25993
 +	* emultempl/pe.em (gld_${EMULATION_NAME}_after_open): Don't copy
 +	other_bfd_filename for bfd_set_filename, and test result of
@@ -45065,9 +45316,7 @@ index bb9dddb0c8..4eec7d2977 100644
 +	PR 25882
 +	* ldlang.c (lang_check): Call bfd_merge_private_bfd_data for
 +	shared libraries.
- 
--	Backport from mainline.
--	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
++
 +2020-05-01  Alan Modra  <amodra@gmail.com>
 +
 +	* po/BLD-POTFILES.in: Regenerate.
@@ -45451,7 +45700,9 @@ index bb9dddb0c8..4eec7d2977 100644
 +	* testsuite/ld-x86-64/pr19609-6a.d: Don't expect linker error.
 +
 +2020-04-01  Tamar Christina  <tamar.christina@arm.com>
-+
+ 
+-	Backport from mainline.
+-	2020-04-01  Tamar Christina  <tamar.christina@arm.com>
 +	PR ld/16017
 +	* testsuite/ld-arm/arm-elf.exp (thumb-plt, thumb-plt-got): Skip for NaCL.
 +
@@ -45628,7 +45879,7 @@ index bb9dddb0c8..4eec7d2977 100644
  
  	* testplug.c (parse_symdefstr): Use %hhi to read sym->def, and
  	clear new fields.
-@@ -55,11 +1883,173 @@
+@@ -81,11 +1937,173 @@
  	* testplug3.c (parse_symdefstr): Likewise.
  	* testplug4.c (parse_symdefstr): Likewise.
  
@@ -45806,15 +46057,13 @@ index bb9dddb0c8..4eec7d2977 100644
  
  2020-02-22  Alan Modra  <amodra@gmail.com>
  
-@@ -67,10 +2057,35 @@
+@@ -93,10 +2111,35 @@
  	* NEWS: Mention better "PHDR segment not covered by LOAD segment"
  	checking.
  
 -2020-02-14  Nick Clifton  <nickc@redhat.com>
 +2020-02-19  Sergey Belyashov  <sergey.belyashov@gmail.com>
- 
--	Import from the mainline:
--	2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
++
 +	PR 25537
 +	* emultempl/z80.em: Remove machine compatability checking.
 +
@@ -45840,12 +46089,14 @@ index bb9dddb0c8..4eec7d2977 100644
 +2020-02-19  Alan Modra  <amodra@gmail.com>
 +
 +	* testsuite/ld-plugin/pr25355.d: Allow alpha-linux nm result.
-+
+ 
+-	Import from the mainline:
+-	2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
 +2020-02-10  H.J. Lu  <hongjiu.lu@intel.com>
  
  	PR binutils/25355
  	* testsuite/ld-plugin/lto.exp: Run PR binutils/25355 test.
-@@ -79,19 +2094,182 @@
+@@ -105,19 +2148,182 @@
  	* testsuite/lib/ld-lib.exp (run_cc_link_tests): Support compile
  	only dump.
  
@@ -46038,7 +46289,7 @@ index bb9dddb0c8..4eec7d2977 100644
  	PR 25477
  	* ldelf.c (ldelf_check_ld_so_conf): Add prefix parameter and
  	correct concat.
-@@ -102,12 +2280,21 @@
+@@ -128,12 +2334,21 @@
  	* Makefile.am: Correct z80 dependencies.
  	* Makefile.in: Regenerate.
  
@@ -46063,7 +46314,7 @@ index bb9dddb0c8..4eec7d2977 100644
  	PR ld/25458
  	* testsuite/ld-elf/pr25458.map: New file.
  	* testsuite/ld-elf/pr25458.rd: Likewise.
-@@ -115,11 +2302,93 @@
+@@ -141,11 +2356,93 @@
  	* testsuite/ld-elf/pr25458b.s: Likewise.
  	* testsuite/ld-elf/shared.exp: Run PR ld/25458 test.
  
@@ -46158,10 +46409,91 @@ index bb9dddb0c8..4eec7d2977 100644
  
  	* testsuite/ld-x86-64/align-branch-1.d: Loosen instruction regexps
 diff --git a/gold/ChangeLog b/gold/ChangeLog
-index 20a5e046f2..85fefa989f 100644
+index 20a5e046f2..03d99a52fe 100644
 --- a/gold/ChangeLog
 +++ b/gold/ChangeLog
-@@ -1,3 +1,9 @@
+@@ -1,3 +1,90 @@
++2020-10-09  Alan Modra  <amodra@gmail.com>
++
++	* powerpc.cc (Powerpc_relobj::do_relocate_sections): Don't do
++	local entry offset optimisation for lplt_section.
++	(Target_powerpc::Branch_info::make_stub): Don't add local
++	entry offset to long branch dest passed to
++	add_long_branch_entry.  Do pass st_other bits.
++	(Stub_table::Branch_stub_ent): Add "other_" field.
++	(Stub_table::add_long_branch_entry): Add "other" param, and
++	save.
++	(Stub_table::branch_stub_size): Adjust long branch offset.
++	(Stub_table::do_write): Likewise.
++	(Target_powerpc::Relocate::relocate): Likewise.
++
++2020-10-09  Alan Modra  <amodra@gmail.com>
++
++	* powerpc.cc (is_got_reloc): New function.
++	(Target_powerpc::Relocate::relocate): Use it here, exclude GOT
++	relocs when looking for stubs.
++
++2020-10-08  H.J. Lu  <hongjiu.lu@intel.com>
++
++	* testsuite/split_i386.sh: Updated for --split-stack-adjust-size
++	default change.
++	* testsuite/split_x86_64.sh: Likewise.
++
++2020-10-08  Alan Modra  <amodra@gmail.com>
++
++	* options.h (split_stack_adjust_size): Default to 0x100000.
++
++2020-09-26  Alan Modra  <amodra@gmail.com>
++
++	* powerpc.cc (Target_powerpc): Rename power10_stubs_ to
++	power10_relocs_.
++	(Target_powerpc::set_power10_relocs): New accessor.
++	(Target_powerpc::set_power10_stubs): Delete.
++	(Target_powerpc::power10_stubs): Adjust.
++	(Target_powerpc::has_localentry0): New accessor.
++	(ld_0_11): New constant.
++	(glink_eh_frame_fde_64v1, glink_eh_frame_fde_64v2): Adjust.
++	(glink_eh_frame_fde_64v2_localentry0): New.
++	(Output_data_glink::pltresolve_size): Update.
++	(Output_data_glink::add_eh_frame): Use localentry0 version eh_frame.
++	(Output_data_glink::do_write): Move r2 save to start of ELFv2 stub
++	and only emit for has_localentry0.  Don't use r2 in the stub.
++	(Target_powerpc::Scan::local, global): Adjust for
++	set_power10_relocs renaming.
++	(Target_powerpc::scan_relocs): Warn and reset plt_localentry0_.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	* powerpc.cc (Target_powerpc::Relocate::relocate): Don't skip
++	first insn of __tls_get_addr_opt stub.
++
++2020-09-24  Alan Modra  <amodra@gmail.com>
++
++	Apply from master
++	2020-07-27  Alan Modra  <amodra@gmail.com>
++	* options.h (DEFINE_enum): Add optional_arg__ param, adjust
++	all uses.
++	(General_options): Add --power10-stubs and --no-power10-stubs.
++	* options.cc (General_options::parse_no_power10_stubs): New.
++	(General_options::finalize): Handle --power10-stubs.
++	* powerpc.cc (set_power10_stubs): Don't set when --power10-stubs=no.
++	(power10_stubs_auto): New.
++	(struct Plt_stub_ent): Add toc_ and tocoff_.  Don't use a bitfield
++	for indx_.
++	(struct Branch_stub_ent): Add toc_and tocoff_.  Use bitfields for
++	iter_, notoc_ and save_res_.
++	(add_plt_call_entry): Set toc_.  Adjust resizing conditions for
++	--power10-stubs=auto.
++	(add_long_branch_entry): Set toc_.
++	(add_eh_frame, define_stub_syms): No longer use const_iterators
++	for plt and long branch stub iteration.
++	(build_tls_opt_head, build_tls_opt_tail): Change parameters and
++	return value.  Move tests for __tls_get_addr to callers.
++	(plt_call_size): Handle --power10-stubs=auto.
++	(branch_stub_size): Likewise.
++	(Stub_table::do_write): Likewise.
++	(relocate): Likewise.
++
 +2020-09-19  Nick Clifton  <nickc@redhat.com>
 +
 +	This is the 2.35.1 point release.
@@ -46171,7 +46503,7 @@ index 20a5e046f2..85fefa989f 100644
  2020-09-10  Alan Modra  <amodra@gmail.com>
  
  	Apply from master
-@@ -8,9 +14,200 @@
+@@ -8,9 +95,200 @@
  	(Target_powerpc::Relocate::relocate): Control tprel optimisation
  	with tprel_opt_ and enable for 32-bit.
  
