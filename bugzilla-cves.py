@@ -7,7 +7,7 @@ binutils_bugzilla_regex = re.compile(r'https:\/\/sourceware.org\/bugzilla\/show_
 binutils_bugzilla_prefix = 'https://sourceware.org/bugzilla/show_bug.cgi?id='
 opensuse_bugzilla_prefix = 'https://bugzilla.opensuse.org/show_bug.cgi?id='
 pr_regex = re.compile(r'\+\s+PR ([\w-]+\/)?([0-9]+)')
-obs_changelog = '/home/marxin/BIG/osc/home:marxin:branches:devel:gcc-new/binutils/binutils.changes'
+obs_changelog = '/home/marxin/BIG/osc/home:marxin:branches:devel:gcc/binutils/binutils.changes'
 
 # the file is created from bugzilla with Export XML from all PRs assigned to matz@suse.com
 
@@ -16,8 +16,8 @@ bugs = data['bugzilla']['bug']
 
 # the file is created with:
 # rm diff
-# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_33-branch..origin/binutils-2_34-branch >> diff
-# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_33-branch..origin/binutils-2_34-branch >> diff
+# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_35-branch..origin/binutils-2_36-branch >> diff
+# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_35-branch..origin/binutils-2_36-branch >> diff
 
 mentioned_prs = set()
 for line in open('binutils.diff').readlines():
