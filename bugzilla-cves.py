@@ -15,9 +15,9 @@ data = xmltodict.parse(open('assigned.xml').read())
 bugs = data['bugzilla']['bug']
 
 # the file is created with:
-# rm diff
-# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_35-branch..origin/binutils-2_36-branch >> diff
-# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_35-branch..origin/binutils-2_36-branch >> diff
+# rm binutils.diff
+# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_36-branch..origin/binutils-2_37-branch >> binutils.diff
+# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_36-branch..origin/binutils-2_37-branch >> binutils.diff
 
 mentioned_prs = set()
 for line in open('binutils.diff').readlines():
