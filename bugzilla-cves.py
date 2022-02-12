@@ -16,8 +16,8 @@ bugs = data['bugzilla']['bug']
 
 # the file is created with:
 # rm binutils.diff
-# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_36-branch..origin/binutils-2_37-branch >> binutils.diff
-# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_36-branch..origin/binutils-2_37-branch >> binutils.diff
+# find . -name ChangeLog | xargs -L1 git diff origin/binutils-2_37-branch..origin/binutils-2_38-branch >> binutils.diff
+# find . -name ChangeLog-[0-9]* | xargs -L1 git diff origin/binutils-2_37-branch..origin/binutils-2_38-branch >> binutils.diff
 
 mentioned_prs = set()
 for line in open('binutils.diff').readlines():
